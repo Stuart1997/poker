@@ -6,10 +6,6 @@ object Poker extends App
   Dealing.Deal
 }
 
-//Shows high card with a flush - fix
-//Shows 3 of a kind with a full house - fix
-//Map each hand to a numerical value, change a variable to this value when the
-//  hand is discovered so it only shows the highest one rather than 2
 object CardValue extends Enumeration
 {
   type CardValue = Value
@@ -36,57 +32,98 @@ object Suit extends Enumeration
 
 case class Card(value: CardValue, suit: Suit)
 
+sealed trait HandResult
+case class RoyalFlush(value:CardValue, suit:Suit) extends HandResult
+case class StraightFlush(value:CardValue, suit:Suit) extends HandResult
+case class FourOfAKind(value:CardValue) extends HandResult
+case class FullHouse(value:CardValue) extends HandResult
+case class Flush(suit:Suit) extends HandResult
+case class Straight(value:CardValue) extends HandResult
+case class ThreeOfAKind(value:CardValue) extends HandResult
+case class TwoPairs(value:CardValue) extends HandResult
+case class OnePair(value:CardValue) extends HandResult
+case class HighCard(value:CardValue) extends HandResult
+
 object Dealing
 {
   def Deal: Unit =
   {
+    //Make sure that the pairs and other functions work with 2 cards instead of all 5
+    //A flush that contains pairs will print "Flush" and "x pairs" - need to only show the highest
 
     val random = scala.util.Random
 
-    //Put this in a function
-    val firstCard, secondCard, thirdCard, fourthCard, fifthCard =
-      Card(CardValue(random.nextInt(12)), Suit(random.nextInt(3)))
-    val fullHand = List(firstCard, secondCard, thirdCard, fourthCard, fifthCard)
-    println("Hand dealt: " + fullHand(0).value + " of " + fullHand(0).suit.toString + " / " + fullHand(1).value + " of " + fullHand(1).suit.toString)
-    println("More cards: " + fullHand(2).value + " of " + fullHand(2).suit.toString + " / " + fullHand(3).value + " of " + fullHand(3).suit.toString + " / " +
-                             fullHand(4).value + " of " + fullHand(4).suit.toString)
-    println()
+    val firstCard, secondCard, thirdCard, fourthCard, fifthCard = Card(CardValue(random.nextInt(13)), Suit(random.nextInt(4)))
 
-    def threeOfAKind = handChecker.nOfAKind(3)_
-    def fourOfAKind = handChecker.nOfAKind(4)_
-    threeOfAKind(fullHand)
-    fourOfAKind(fullHand)
-    handChecker.Pairs(fullHand)
-    handChecker.Flush(fullHand)
-    Straight(fullHand)
+    val fullHandTwo =   List(firstCard, secondCard)
+    val fullHandThree = List(firstCard, secondCard, thirdCard)
+    val fullHandFour =  List(firstCard, secondCard, thirdCard, fourthCard)
+    val fullHandFive =  List(firstCard, secondCard, thirdCard, fourthCard, fifthCard)
 
-    def Straight(hand: List[Card]): Boolean =
+    def printHand (Counter:Int, Hand:List[Card])
     {
-      //Gets the hand, stores the values into a list and sorts them
-      val handValuesList: List[CardValue] = hand.map(card => card.value).sorted
-
-      println("Straight checker: " + handValuesList)
-
-      //true
-
-      //Make a function for this
-      //if (handValuesList.head == CardValue(_) && handValuesList(1) == CardValue(_+1))
-      if (handValuesList.last == CardValue.King)
+      var i = 0
+      var handDealt = ""
+      print("Hand dealt: ")
+      for (i <- 0 to Counter)
       {
-        //handValuesList.head = CardValue.Nine
-        true
+        print(s"${Hand(i).value} of ${Hand(i).suit.toString} / ")
       }
-
-      /*handValuesList match {
-        case CardValue(x) :: CardValue(x+1) => ""
-      }*/
-
-      /*if (handValuesList.head = (handValuesList(1) + 1)) {
-        println("")
-        true
-      }
-      else {false}*/
     }
+
+    printHand(1, fullHandTwo)
+    println()
+    handChecker.onePair(fullHandTwo)
+    handChecker.highCard(fullHandTwo)
+    println(Scoring.handScore(fullHandTwo)._2)
+    scala.io.StdIn.readLine()
+
+    printHand(2, fullHandThree)
+    println()
+    handChecker.threeOfAKind(fullHandThree)
+    handChecker.twoPairs(fullHandThree)
+    handChecker.onePair(fullHandThree)
+    handChecker.highCard(fullHandThree)
+    println(Scoring.handScore(fullHandThree))
+    scala.io.StdIn.readLine()
+
+    printHand(3, fullHandFour)
+    println()
+    handChecker.fourOfAKind(fullHandFour)
+    handChecker.threeOfAKind(fullHandFour)
+    handChecker.twoPairs(fullHandFour)
+    handChecker.onePair(fullHandFour)
+    handChecker.highCard(fullHandFour)
+    println(Scoring.handScore(fullHandFour))
+    scala.io.StdIn.readLine()
+
+    printHand(4, fullHandFive)
+    println()
+    handChecker.royalFlush(fullHandFive)
+    handChecker.straightFlush(fullHandFive)
+    handChecker.fourOfAKind(fullHandFive)
+    handChecker.fullHouse(fullHandFive)
+    handChecker.flush(fullHandFive)
+    handChecker.straight(fullHandFive)
+    handChecker.threeOfAKind(fullHandFive)
+    handChecker.twoPairs(fullHandFive)
+    handChecker.onePair(fullHandFive)
+    handChecker.highCard(fullHandFive)
+
+    println(Scoring.handScore(fullHandFive))
+
+    //Royal Flush
+    /*val firstCard = Card(CardValue(0), Suit(0))
+    val secondCard = Card(CardValue(12), Suit(0))
+    val thirdCard = Card(CardValue(11), Suit(0))
+    val fourthCard = Card(CardValue(10), Suit(0))
+    val fifthCard = Card(CardValue(9), Suit(0))*/
+
+    //Straight Flush
+    /*val firstCard = Card(CardValue(9), Suit(0))
+    val secondCard = Card(CardValue(8), Suit(0))
+    val thirdCard = Card(CardValue(7), Suit(0))
+    val fourthCard = Card(CardValue(6), Suit(0))
+    val fifthCard = Card(CardValue(5), Suit(0))*/
   }
 }
-

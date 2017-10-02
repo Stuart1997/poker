@@ -84,7 +84,7 @@ object Dealing
     handChecker.twoPairs(fullHandThree)
     handChecker.onePair(fullHandThree)
     handChecker.highCard(fullHandThree)
-    println(Scoring.handScore(fullHandThree))
+    println(Scoring.handScore(fullHandThree)._2)
     scala.io.StdIn.readLine()
 
     printHand(3, fullHandFour)
@@ -94,7 +94,7 @@ object Dealing
     handChecker.twoPairs(fullHandFour)
     handChecker.onePair(fullHandFour)
     handChecker.highCard(fullHandFour)
-    println(Scoring.handScore(fullHandFour))
+    println(Scoring.handScore(fullHandFour)._2)
     scala.io.StdIn.readLine()
 
     printHand(4, fullHandFive)
@@ -109,8 +109,7 @@ object Dealing
     handChecker.twoPairs(fullHandFive)
     handChecker.onePair(fullHandFive)
     handChecker.highCard(fullHandFive)
-
-    println(Scoring.handScore(fullHandFive))
+    println(Scoring.handScore(fullHandFive)._2)
 
     //Royal Flush
     /*val firstCard = Card(CardValue(0), Suit(0))

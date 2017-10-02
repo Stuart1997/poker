@@ -14,7 +14,7 @@ object handChecker {
 
   //Gets a list of cards, checks to see if the first two are Ace & 10, if yes, shifts Ace to the end
   def isHandAStraight(hand:List[CardValue]):Boolean = hand match {
-    case CardValue.Ace :: Ten :: (xs:List[CardValue]) => isHandAStraightInt(List(Ten.id) ++ xs.map(_.id) ++ List(13)) //Ace is high might be a Royal Flush
+    case CardValue.Ace :: Ten :: (xs:List[CardValue]) => isHandAStraightInt(List(Ten.id) ++ xs.map(_.id) ++ List(13))
     case xs:List[CardValue] => isHandAStraightInt(xs.map(_.id))
     case _ => false
   }
@@ -22,7 +22,7 @@ object handChecker {
   //Gets the list of cards, checks 2 at a time, if the second is +1 more than the first, do the next pair
   def isHandAStraightInt(hand:List[Int]):Boolean = hand.sliding(2).forall(x => x.head + 1 == x.last)
 
-  def royalFlush(hand: List[Card]): Boolean = {
+  def royalFlush(hand: List[Card]): Boolean /*Option(HandResult)*/ = {
     if (allCardsSameSuit(hand))
     {
       //Gets the hand, stores the values into a list and sorts them
@@ -56,6 +56,7 @@ object handChecker {
       val enumIdList: List[Int] = sortedHandValuesList.map(x => x.id)
 
       //Sliding(2) takes two values. forall is used to compare them. If all fit Predicate then true.
+
       val isItAStraight: Boolean = isHandAStraight(sortedHandValuesList)
 
       if (isItAStraight)
@@ -104,12 +105,13 @@ object handChecker {
   }
 
   def flush(hand: List[Card]): Boolean = {
+    val handValuesList: List[CardValue] = hand.map(card => card.value).sorted
     val suitList: List[Suit] = hand.map(card => card.suit).sorted
     val groupMap = suitList.groupBy(identity)
     val listDuplicates: List[Suit] = groupMap.toList.map{case (k:Suit.Suit, ls:List[Suit]) => ls.head}
     //val listDuplicates: List[Suit] = List(Suit.Spades)
 
-    if (listDuplicates.length == 1)
+    if (listDuplicates.length == 1 && handValuesList.length == 5)
     {
       handResult = s"Flush (${listDuplicates.head})"
       true
@@ -125,13 +127,16 @@ object handChecker {
     //Creates a list based on the Value (eg. 1,2,3 for Ace Two Three)
     val valuedList: List[Int] = handValuesList.map(x => x.id)
 
-    //Sliding(2) takes two values. forall is used to compare them. If all fit Predicate then true.
-    val isItAStraight: Boolean = valuedList.sliding(2).forall(x => x.head + 1 == x.last)
-    if (isItAStraight)
-    {
-      handResult = s"Straight: ${handValuesList.last} to ${handValuesList.head}"
-      true
-    }
+    if (handValuesList.length == 5)
+      {
+        //Sliding(2) takes two values. forall is used to compare them. If all fit Predicate then true.
+        val isItAStraight: Boolean = valuedList.sliding(2).forall(x => x.head + 1 == x.last)
+        if (isItAStraight)
+        {
+          handResult = s"Straight: ${handValuesList.last} to ${handValuesList.head}"
+        }
+        true
+      }
     else {false}
   }
 

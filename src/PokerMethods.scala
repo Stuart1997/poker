@@ -59,7 +59,7 @@ object handChecker {
 
       val isItAStraight: Boolean = isHandAStraight(sortedHandValuesList)
 
-      if (isItAStraight)
+      if (isItAStraight && enumIdList.length == 5)
       {
         handResult = s"Straight Flush (${hand.head.suit}: ${sortedHandValuesList.last} to ${sortedHandValuesList.head})"
         true
@@ -127,14 +127,12 @@ object handChecker {
     //Creates a list based on the Value (eg. 1,2,3 for Ace Two Three)
     val valuedList: List[Int] = handValuesList.map(x => x.id)
 
-    if (handValuesList.length == 5)
+    //Sliding(2) takes two values. forall is used to compare them. If all fit Predicate then true.
+    val isItAStraight: Boolean = valuedList.sliding(2).forall(x => x.head + 1 == x.last)
+
+    if (handValuesList.length == 5 && isItAStraight)
       {
-        //Sliding(2) takes two values. forall is used to compare them. If all fit Predicate then true.
-        val isItAStraight: Boolean = valuedList.sliding(2).forall(x => x.head + 1 == x.last)
-        if (isItAStraight)
-        {
-          handResult = s"Straight: ${handValuesList.last} to ${handValuesList.head}"
-        }
+        handResult = s"Straight: ${handValuesList.last} to ${handValuesList.head}"
         true
       }
     else {false}
@@ -212,14 +210,16 @@ object Scoring {
   def handScore(hand:List[Card]): (Int, String) =
   {
     val listOfFunctions = List((handChecker.royalFlush _, 10, "Royal Flush"), (handChecker.straightFlush _, 9, "Straight Flush"),
-      (handChecker.fourOfAKind, 8, "Four of a Kind"), (handChecker.fullHouse _, 7, "Full House"),
-      (handChecker.flush _, 6, "Flush"), (handChecker.straight _, 5, "Straight"),
-      (handChecker.threeOfAKind, 4, "Three of a Kind"), (handChecker.twoPairs _, 3, "Two pairs"),
+      (handChecker.fourOfAKind, 8, "Four of a Kind"), (handChecker.fullHouse _, 7, "Full House"), (handChecker.flush _, 6, "Flush"),
+      (handChecker.straight _, 5, "Straight"), (handChecker.threeOfAKind, 4, "Three of a Kind"), (handChecker.twoPairs _, 3, "Two pairs"),
       (handChecker.onePair _, 2, "One pair"), (handChecker.highCard _, 1, "High card"))
 
+    //Goes through each function in the list, uses 3 temp variables: filter, value, string
+    //The hand is passed into a tuple, intending to contain a hand, value and score
+    //It is then filtered to show whether the cards correspond with a hand, ignoring the value and score (false, false, true, etc)
     val scores = listOfFunctions.map{case (f,v,s) => (f(hand), v, s)}.filter{case (t, _, _) => t}
-    val allScores = scores.map{case (b,v,s) => (v,s)}
-    val highScore = allScores.max
+    val allScores = scores.map{case (b,v,s) => (v,s)}   //Maps all of the scores based on whether they're true or false
+    val highScore = allScores.max                       //Displays the highest score that is true
     highScore
   }
 }

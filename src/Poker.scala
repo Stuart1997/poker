@@ -48,13 +48,8 @@ object Dealing
 {
   def Deal: Unit =
   {
-    //Make sure that the pairs and other functions work with 2 cards instead of all 5
-    //A flush that contains pairs will print "Flush" and "x pairs" - need to only show the highest
-
     val random = scala.util.Random
-
     val firstCard, secondCard, thirdCard, fourthCard, fifthCard = Card(CardValue(random.nextInt(13)), Suit(random.nextInt(4)))
-
     val fullHandTwo =   List(firstCard, secondCard)
     val fullHandThree = List(firstCard, secondCard, thirdCard)
     val fullHandFour =  List(firstCard, secondCard, thirdCard, fourthCard)
@@ -66,40 +61,27 @@ object Dealing
       var handDealt = ""
       print("Hand dealt: ")
       for (i <- 0 to Counter)
-      {
-        print(s"${Hand(i).value} of ${Hand(i).suit.toString} / ")
-      }
+      { print(s"${Hand(i).value} of ${Hand(i).suit.toString} / ") }
+      println()
     }
 
-    printHand(1, fullHandTwo)
-    println()
-    handChecker.onePair(fullHandTwo)
-    handChecker.highCard(fullHandTwo)
-    println(Scoring.handScore(fullHandTwo)._2)
-    scala.io.StdIn.readLine()
+    printHand(1, fullHandTwo)                     //Outputs the hand according to the stage in the draw
+    println(Scoring.handScore(fullHandTwo)._2)    //Prints the highest value hand (._2 = hand name, _.1 = score value)
+    scala.io.StdIn.readLine()                     //User must press enter to proceed
 
     printHand(2, fullHandThree)
-    println()
-    handChecker.threeOfAKind(fullHandThree)
-    handChecker.twoPairs(fullHandThree)
-    handChecker.onePair(fullHandThree)
-    handChecker.highCard(fullHandThree)
     println(Scoring.handScore(fullHandThree)._2)
     scala.io.StdIn.readLine()
 
     printHand(3, fullHandFour)
-    println()
-    handChecker.fourOfAKind(fullHandFour)
-    handChecker.threeOfAKind(fullHandFour)
-    handChecker.twoPairs(fullHandFour)
-    handChecker.onePair(fullHandFour)
-    handChecker.highCard(fullHandFour)
     println(Scoring.handScore(fullHandFour)._2)
     scala.io.StdIn.readLine()
 
     printHand(4, fullHandFive)
-    println()
-    handChecker.royalFlush(fullHandFive)
+    println(Scoring.handScore(fullHandFive)._2)
+
+    //Pre-scoring method calling
+    /*handChecker.royalFlush(fullHandFive)
     handChecker.straightFlush(fullHandFive)
     handChecker.fourOfAKind(fullHandFive)
     handChecker.fullHouse(fullHandFive)
@@ -108,8 +90,7 @@ object Dealing
     handChecker.threeOfAKind(fullHandFive)
     handChecker.twoPairs(fullHandFive)
     handChecker.onePair(fullHandFive)
-    handChecker.highCard(fullHandFive)
-    println(Scoring.handScore(fullHandFive)._2)
+    handChecker.highCard(fullHandFive)*/
 
     //Royal Flush
     /*val firstCard = Card(CardValue(0), Suit(0))
